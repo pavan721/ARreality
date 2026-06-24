@@ -1,6 +1,7 @@
 import { Hologram } from "@/components/3d/Hologram";
 import { ChatInterface } from "@/components/layout/ChatInterface";
 import { SettingsPanel } from "@/components/layout/SettingsPanel";
+import { HudPanel } from "@/components/layout/HudPanel";
 
 export default function Home() {
   return (
@@ -27,6 +28,7 @@ export default function Home() {
       <Hologram />
 
       {/* UI Overlays */}
+      <HudPanel />
       <ChatInterface />
       <SettingsPanel />
     </main>

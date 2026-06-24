@@ -20,9 +20,14 @@ function useSpeechSynthesis() {
 
     const utterance = new SpeechSynthesisUtterance(text)
 
-    // Try to find an English robotic/male voice
+    // Try to find an English robotic/male voice, fallback to any available english voice
     const voices = synth.getVoices()
-    const preferredVoice = voices.find(v => v.name.includes('Google UK English Male') || v.name.includes('Daniel') || v.name.includes('Male'))
+    let preferredVoice = voices.find(v => v.name.includes('Google UK English Male') || v.name.includes('Daniel') || v.name.includes('Male') || v.name.toLowerCase().includes('jarvis'))
+
+    if (!preferredVoice) {
+        preferredVoice = voices.find(v => v.lang.startsWith('en'))
+    }
+
     if (preferredVoice) {
       utterance.voice = preferredVoice
     }
@@ -63,7 +68,7 @@ export function ChatInterface() {
 
   const keys = { openai: openaiKey, anthropic: anthropicKey, gemini: geminiKey }
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, setInput } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, setInput, error } = useChat({
     api: '/api/chat',
     body: { provider: selectedProvider, keys },
     initialMessages: storedMessages,
@@ -71,6 +76,10 @@ export function ChatInterface() {
       addMessage(message as any)
       speak(message.content)
     },
+    onError: (err) => {
+      speak("Error encountered. Check system configuration.")
+      setIsProcessing(false)
+    }
   })
 
   // Sync state back to Zustand for processing visual
@@ -197,6 +206,14 @@ export function ChatInterface() {
                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
                  Processing...
                </div>
+            </motion.div>
+          )}
+          {error && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center">
+              <div className="bg-red-950/40 border border-red-500/50 rounded-lg px-4 py-3 text-red-400 font-mono text-xs uppercase tracking-widest text-center shadow-[0_0_15px_rgba(255,0,0,0.2)]">
+                [ SYSTEM ERROR ]<br/>
+                {error.message || "Failed to establish neural link. Verify API keys in settings."}
+              </div>
             </motion.div>
           )}
           <div ref={messagesEndRef} />
