@@ -105,7 +105,8 @@ function ArcCasing() {
 }
 
 export function Hologram() {
-  const { isSpeaking, isProcessing } = useAppStore()
+  const isSpeaking = useAppStore(state => state.isSpeaking)
+  const isProcessing = useAppStore(state => state.isProcessing)
 
   return (
     <div className="absolute inset-0 pointer-events-none z-0">
