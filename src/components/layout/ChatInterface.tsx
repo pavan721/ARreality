@@ -11,6 +11,7 @@ function useSpeechSynthesis() {
   const [isMuted, setIsMuted] = useState(false)
   const synth = typeof window !== 'undefined' ? window.speechSynthesis : null
   const { setIsSpeaking } = useAppStore()
+  const cachedVoiceRef = useRef<SpeechSynthesisVoice | null>(null)
 
   const speak = (text: string) => {
     if (isMuted || !synth) return
@@ -20,16 +21,22 @@ function useSpeechSynthesis() {
 
     const utterance = new SpeechSynthesisUtterance(text)
 
-    // Try to find an English robotic/male voice, fallback to any available english voice
-    const voices = synth.getVoices()
-    let preferredVoice = voices.find(v => v.name.includes('Google UK English Male') || v.name.includes('Daniel') || v.name.includes('Male') || v.name.toLowerCase().includes('jarvis'))
+    if (!cachedVoiceRef.current) {
+      // Try to find an English robotic/male voice, fallback to any available english voice
+      const voices = synth.getVoices()
+      let preferredVoice = voices.find(v => v.name.includes('Google UK English Male') || v.name.includes('Daniel') || v.name.includes('Male') || v.name.toLowerCase().includes('jarvis'))
 
-    if (!preferredVoice) {
-        preferredVoice = voices.find(v => v.lang.startsWith('en'))
+      if (!preferredVoice) {
+          preferredVoice = voices.find(v => v.lang.startsWith('en'))
+      }
+
+      if (preferredVoice) {
+        cachedVoiceRef.current = preferredVoice
+      }
     }
 
-    if (preferredVoice) {
-      utterance.voice = preferredVoice
+    if (cachedVoiceRef.current) {
+      utterance.voice = cachedVoiceRef.current
     }
 
     utterance.pitch = 0.8 // Slightly deeper
