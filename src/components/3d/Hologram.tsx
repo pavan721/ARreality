@@ -38,6 +38,8 @@ function ArcCore({ isSpeaking, isProcessing }: { isSpeaking: boolean; isProcessi
   )
 }
 
+const COILS_ARRAY = Array.from({ length: 10 })
+
 function ArcRings({ isSpeaking, isProcessing }: { isSpeaking: boolean; isProcessing: boolean }) {
   const groupRef = useRef<THREE.Group>(null)
 
@@ -62,7 +64,7 @@ function ArcRings({ isSpeaking, isProcessing }: { isSpeaking: boolean; isProcess
       </Torus>
 
       {/* Segmented coils */}
-      {Array.from({ length: 10 }).map((_, i) => (
+      {COILS_ARRAY.map((_, i) => (
         <group key={i} rotation={[0, 0, (i / 10) * Math.PI * 2]}>
           <Cylinder args={[0.05, 0.05, 0.6, 8]} position={[0, 1.5, 0]} rotation={[0, 0, 0]}>
             <meshStandardMaterial color="#444" metalness={0.8} roughness={0.2} />
@@ -76,6 +78,8 @@ function ArcRings({ isSpeaking, isProcessing }: { isSpeaking: boolean; isProcess
     </group>
   )
 }
+
+const STRUTS_ARRAY = Array.from({ length: 3 })
 
 function ArcCasing() {
   const groupRef = useRef<THREE.Group>(null)
@@ -94,7 +98,7 @@ function ArcCasing() {
       </Cylinder>
 
       {/* Casing details / struts */}
-      {Array.from({ length: 3 }).map((_, i) => (
+      {STRUTS_ARRAY.map((_, i) => (
         <mesh key={i} rotation={[0, 0, (i / 3) * Math.PI * 2]} position={[0, 0, 0.1]}>
           <boxGeometry args={[0.2, 5.2, 0.1]} />
           <meshStandardMaterial color="#333" metalness={0.8} roughness={0.5} />
