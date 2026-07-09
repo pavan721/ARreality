@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Activity, Cpu, Database, HardDrive, Zap } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
@@ -8,6 +8,9 @@ import { useAppStore } from '@/store/useAppStore'
 export function HudPanel() {
   const { messages } = useAppStore()
   const [memoryUsage, setMemoryUsage] = useState(0)
+
+  // Memoize random durations for the Neural Net bars so they don't recalculate on every render
+  const neuralNetDurations = useMemo(() => [1, 2, 3, 4].map(() => 1.5 + Math.random()), [])
 
   // Simulate dynamic memory/system stats based on time and messages
   useEffect(() => {
@@ -70,12 +73,12 @@ export function HudPanel() {
             <span>Stable</span>
           </div>
           <div className="grid grid-cols-4 gap-1">
-            {[1, 2, 3, 4].map(i => (
+            {[1, 2, 3, 4].map((i, index) => (
               <div key={i} className="h-6 border border-cyan-500/30 bg-cyan-950/30 rounded flex items-center justify-center relative overflow-hidden">
                 <motion.div
                   className="absolute bottom-0 w-full bg-cyan-500/40"
                   animate={{ height: ['20%', '80%', '40%', '90%', '30%'] }}
-                  transition={{ repeat: Infinity, duration: 1.5 + Math.random(), ease: "linear" }}
+                  transition={{ repeat: Infinity, duration: neuralNetDurations[index], ease: "linear" }}
                 />
               </div>
             ))}
