@@ -76,7 +76,7 @@ export function ChatInterface() {
       addMessage(message as any)
       speak(message.content)
     },
-    onError: (err) => {
+    onError: () => {
       speak("Error encountered. Check system configuration.")
       setIsProcessing(false)
     }
